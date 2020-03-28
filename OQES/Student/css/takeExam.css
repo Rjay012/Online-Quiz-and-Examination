@@ -1,0 +1,30 @@
+﻿body {
+    padding-bottom: 40px;
+    padding-top: 60px;
+    background-color: #fafafa;
+}
+
+.sidebar-nav-fixed {
+    width: 14%;
+}
+
+.timer {
+    display: -webkit-inline-box;
+    font-size: x-large;
+}
+
+#controls {
+    display: -webkit-inline-box;
+}
+
+#controls > div {
+    margin: 5px;
+}
+
+.jst-timeout {
+    color: red
+}
+
+.container {
+    margin: 150px auto;
+}

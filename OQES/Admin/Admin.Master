@@ -1,0 +1,63 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Admin.master.cs" Inherits="OQES.Admin.Admin" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!--UI BOOTSTRAP CSS-->
+    <link href="../Content/bootstrap/css/bootstrap-3.4.1.min.css" rel="stylesheet" />
+    <link href="../Content/bootstrap/css/custom.min.css" rel="stylesheet" />
+    <link href="../Content/style.css" rel="stylesheet" type="text/css" />
+    <link href="../Content/font-awesome/css/all.css" rel="stylesheet" type="text/css" />
+
+    <!--USER DEFINED CSS(entire application)-->
+    <link rel="stylesheet" href="../Content/my-css/navbar.css" />
+    <link rel="stylesheet" href="../Content/my-css/EnrolledStudent.css" />
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav id="header" class="navbar navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div id="sidebar-toggle-button">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </div>
+                    <div class="brand">
+                        <a href="#" id="id">
+                            ADMIN ID
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+
+        <!--<form runat="server">-->
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                
+            </asp:ContentPlaceHolder>
+        <!--</form>-->
+    </div>
+</body>
+    <!--UI BOOTSTRAP JS-->    
+    <script src="../Content/bootstrap/js/jquery-3.4.1.min.js"></script>
+    <script src="../Content/bootstrap/js/bootstrap-3.4.1.min.js"></script>
+    <script src="../Content/bootstrap/js/custom.js"></script>
+    <script src="../Scripts/sidebar-toggle.js"></script>
+    
+    <asp:ContentPlaceHolder ID="footer" runat="server">
+
+    </asp:ContentPlaceHolder>
+
+    <!--USER-DEFINED JS(entire application)-->    
+    <script src="../Scripts/user.js"></script>
+    <script src="../Scripts/alertMessage.js"></script>
+</html>
