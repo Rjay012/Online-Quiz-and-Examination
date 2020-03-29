@@ -103,28 +103,35 @@ function checkExaminee() {
     );
 }
 
+function markEachQuestionPanel() {
+    
+}
+
 function previewExamResult() {
     readyQuestion("preview-examresult-wrapper");
     $(".lightgreen").css("background-color", "lightgreen");
     $(".lightblue").css("background-color", "lightblue");
     $(".salmon").css("background-color", "salmon");
-    $(".has-error").parent().addClass("wrong-ans");
+    $(".has-error, .lightblue, .salmon").parent().addClass("wrong-ans");
+    $(".has-error").parent().addClass("with-checkbox");  //add another class to hold checkboxes
 
     createCheckboxToShowAnswer();
     assignValueToCheckbox();
+    markEachQuestionPanel();
 
     $(".examineeAnsController").prop("disabled", true); 
 }
 
 function createCheckboxToShowAnswer() {
     var c = 1;
-    $(".wrong-ans").parent().each(function () {     //create checkboxes to wrong answer field for enumeration/fill in the blank to show correct answers
+    $(".wrong-ans").parent().parent().removeClass(".panel panel-success").addClass(".panel panel-danger");  //parent of "panel-body", main panel
+    $(".with-checkbox").parent().each(function () {  //create checkboxes for each wrong answer in enumeration and fill in the blank types
         $(this).append(
             "<div class='col-md-12'>" +
             "Correct Answer <input id='ch-wrong-ans" + c + "' type='checkbox' onchange='triggerCheckbox(" + c + ", this.value)' />" +
             "</div>"
         );
-        c++;
+    c++;
     });
 }
 
@@ -321,24 +328,23 @@ function getQuestion(examWrapper, ...type) {
 function buildChoicesAndFields(result) {
     var qProperty = "", i = 1;
     $.each(result, function (key, value) {
-        qProperty += "<div id='question-container" + i + "' class='panel panel-default'>" +
+        qProperty += "<div class='panel panel-success'>" +
             "<div class='panel-body'>" +
             "<p style='word-wrap: break-word'>" +
-            "<strong>" + i + ". " + value + "</strong>" +
+            "<strong>" + (i++) + ". " + value + "</strong>" +
             "</p><br />" +
-            "<div>" +
+            "<div>" +  //has dynamic class
             "<input type='hidden' value='" + key + "' />" +
-            getChoicesAndKeys(i, key, getQuestionType(key)) +
+            getChoicesAndKeys(key, getQuestionType(key)) +
             "</div>" +
             "</div>" +
             "</div>";
-        i++
     });
     return qProperty;
 }
 
-function getChoicesAndKeys(autoNo, qID, qType) {
-    var ck = "", color;
+function getChoicesAndKeys(qID, qType) {
+    var ck = "", color = "";
     fetchData(
         "WebServices//TakeExamService.asmx/" + ((qType === "multiple choice" || qType === "true or false") ? "GetChoice" : "GetAnswer"),
         { qID: qID, examID: parseInt(decodeURIComponent(getParam("id"))), hasAdditionalQuery: "" }  //added examID
@@ -352,15 +358,14 @@ function getChoicesAndKeys(autoNo, qID, qType) {
                 var keyAns = markAnsKey(qID, valL.toLowerCase());  //returns color
 
                 color = ((studAns !== "" && keyAns !== "") ? "lightgreen" : (studAns + keyAns));
-                alert(color);
-                ck += "<p class='" + color + "' style='word-wrap: break-word'>" +
+                ck += "<p class='" + color + "' style='word-wrap: break-word'>" + 
                         "<input class='examineeAnsController' type='radio' name='choice" + z + "' value='" + valL.toLowerCase() + "' onchange='saveAnswer(" + qID + ", this.value, \"" + qType + "\")' /> " + valL + ". " + value +
                     "</p><br />";
                 l++;
             }
             else {
                 color = markAnsKey(qID, value);
-                ck += "<div class='form-group has-" + ((color === "lightblue") ? "success" : "error") + " has-feedback col-sm-6'>" +
+                ck += "<div class='form-group has-" + ((color === "lightblue") ? "success" : "error") + " has-feedback col-sm-6'>" + 
                     "<input class='form-control input-sm examineeAnsController " + qID + "' value='" + value + "' type='text' onkeyup='saveAnswer(" + key + ", this.value, \"" + qType + "\")' />" +
                     "</div>";
             }
