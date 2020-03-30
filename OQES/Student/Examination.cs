@@ -35,7 +35,7 @@ namespace OQES.Student
                                                  "JOIN [enrolled_subj] ON [subject].[subj_id] = [enrolled_subj].[subj_id]" +
                                                  "JOIN [student_handle] ON [enrolled_subj].[handle_id] = [student_handle].[handle_id]" +
                                                  "JOIN [instructor] ON [student_handle].[instr_id] = [instructor].[instr_id]" +
-                                     "WHERE [exam].[status] = 'open' AND [stud_id] = '" + userID + "' AND EXISTS(SELECT * FROM [examinee] WHERE [examinee].[status] = 'pending' AND [examinee].[stud_id] = '" + userID + "' AND [exam].[exam_id] = [examinee].[exam_id])", conn);
+                                     "WHERE [exam].[status] = 'open' AND [stud_id] = '" + userID + "' AND EXISTS(SELECT * FROM [examinee] WHERE [examinee].[status] = 'pending' AND [examinee].[stud_id] = '" + userID + "' AND [exam].[exam_id] = [examinee].[exam_id]) ORDER BY [exam_date] DESC", conn);
 
             conn.Open();
             var r = cmd.ExecuteReader();

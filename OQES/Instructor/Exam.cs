@@ -68,7 +68,7 @@ namespace OQES.Instructor
             var exam = new List<Exam>();
             var cmd = new SqlCommand("SELECT [exam].[exam_id], [title], [subject_title], [exam_date], [status], [time_limit], (SELECT dbo.calculatePassingScore([exam_id])), (SELECT dbo.questionRange([exam_id]))" +
                                      "FROM [exam] JOIN [subject] ON [exam].[subj_id] = [subject].[subj_id]" +
-                                     "WHERE " + filter + "[instr_id] = '" + userID + "' ORDER BY [exam_date] ASC", conn);
+                                     "WHERE " + filter + "[instr_id] = '" + userID + "' ORDER BY [exam_date] DESC", conn);
 
             conn.Open();
             var r = cmd.ExecuteReader();

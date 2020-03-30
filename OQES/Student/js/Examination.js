@@ -87,6 +87,7 @@ function examReady() {
                         }
                     }
                 ],
+                "order": [3, "desc"]
             });
         }
     });

@@ -103,8 +103,10 @@ function checkExaminee() {
     );
 }
 
-function markEachQuestionPanel() {
-    
+function markSelectedRadioBtn() {  //mark student selected answer (radio button)
+    $(".lightgreen, .salmon").each(function () {
+        $(this).children().prop("checked", true);
+    });
 }
 
 function previewExamResult() {
@@ -117,7 +119,7 @@ function previewExamResult() {
 
     createCheckboxToShowAnswer();
     assignValueToCheckbox();
-    markEachQuestionPanel();
+    markSelectedRadioBtn();
 
     $(".examineeAnsController").prop("disabled", true); 
 }
@@ -265,12 +267,12 @@ function getExamType() {
     return examType;
 }
 
-function checkResultGuide() {
+function displayResultGuide() {
     return [
         "<strong>Result Guide:</strong><br />" +
         "<span class='label label-success'><i class='fas fa-check-square' aria-hidden='true'></i> Answer is Correct</span> - " +
         "<span class='label label-info'><i class='fas fa-check-square' aria-hidden='true'></i> Correct Answer</span> - " +
-        "<span class='label label-danger'>Wrong Answer</span>"
+        "<span class='label label-danger'>Wrong Answer</span><br /><br />"
     ];
 }
 
@@ -292,7 +294,7 @@ function readyQuestion(examWrapper) {
                 i++;
             });
 
-            $("#" + examWrapper).html(checkResultGuide() + headerType);
+            $("#" + examWrapper).html(displayResultGuide() + headerType);
             getQuestion(examWrapper, ...type);
             $(".timerstart").prop("disabled", false);
         });
@@ -304,7 +306,7 @@ function readyQuestion(examWrapper) {
 
 var z = 1;
 function getQuestion(examWrapper, ...type) {
-    if (type.length > 0) {
+    if (type.length > 0) {  //if array has value
         for (var x in type) {
             fetchData(
                 "WebServices//TakeExamService.asmx/GetPartitionedQuestionaire",
@@ -320,7 +322,7 @@ function getQuestion(examWrapper, ...type) {
         fetchData(
             "WebServices//TakeExamService.asmx/ReadyQuestion", { examID: decodeURIComponent(getParam("id")) }
         ).done(function (result) {
-            $("#" + examWrapper).html(buildChoicesAndFields(result));
+            $("#" + examWrapper).html(displayResultGuide() + buildChoicesAndFields(result));
         });
     }
 }
@@ -331,7 +333,7 @@ function buildChoicesAndFields(result) {
         qProperty += "<div class='panel panel-success'>" +
             "<div class='panel-body'>" +
             "<p style='word-wrap: break-word'>" +
-            "<strong>" + (i++) + ". " + value + "</strong>" +
+            "<strong>" + (i++) + ". " + value + "(" + key + ")" + "</strong>" +
             "</p><br />" +
             "<div>" +  //has dynamic class
             "<input type='hidden' value='" + key + "' />" +
@@ -359,7 +361,7 @@ function getChoicesAndKeys(qID, qType) {
 
                 color = ((studAns !== "" && keyAns !== "") ? "lightgreen" : (studAns + keyAns));
                 ck += "<p class='" + color + "' style='word-wrap: break-word'>" + 
-                        "<input class='examineeAnsController' type='radio' name='choice" + z + "' value='" + valL.toLowerCase() + "' onchange='saveAnswer(" + qID + ", this.value, \"" + qType + "\")' /> " + valL + ". " + value +
+                    "<input class='examineeAnsController' type='radio' name='choice" + z + "' value='" + valL.toLowerCase() + "' onchange='saveAnswer(" + qID + ", this.value, \"" + qType + "\")' /> " + valL + ". " + value +
                     "</p><br />";
                 l++;
             }
@@ -423,8 +425,9 @@ function finishExam() {
 function start() {
     readyQuestion("exam");
     $("#btnFinishExam").prop("disabled", false);
-    $(".has-feedback :input").val("");
+    $(".has-feedback :input").val("");  
     $(".has-feedback").prop("class", "form-group");
+    $(".panel panel-success").prop("class", "panel panel-default");
 }
 
 function finish() {

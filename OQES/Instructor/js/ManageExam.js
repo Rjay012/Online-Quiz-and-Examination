@@ -138,7 +138,7 @@ function loadExam(title, subjectID, status) {
                         }
                     }
                 ],
-                "order": [3, "desc"],
+                "order": [4, "desc"],
                 rowReorder: {
                     selector: 'td:nth-child(2)'
                 },
