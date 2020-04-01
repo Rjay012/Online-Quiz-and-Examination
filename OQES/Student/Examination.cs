@@ -84,7 +84,7 @@ namespace OQES.Student
                                      "FROM [exam] JOIN [subject] ON [exam].[subj_id] = [subject].[subj_id]" +
                                                  "JOIN [examinee] ON [exam].[exam_id] = [examinee].[exam_id]" +
                                                  "JOIN [instructor] ON [exam].[instr_id] = [instructor].[instr_id]" +
-                                     "WHERE [examinee].[status] = 'taken' AND [stud_id] = '" + userID + "'", conn);
+                                     "WHERE [examinee].[status] = 'taken' AND [stud_id] = '" + userID + "' ORDER BY [exam_date] DESC", conn);
 
             conn.Open();
             var sdr = cmd.ExecuteReader();

@@ -42,6 +42,7 @@ function showPrevExam() {
                         'data': 'rating'
                     }
                 ],
+                "order": [4, "desc"]
             });
         }
     });
@@ -87,7 +88,7 @@ function examReady() {
                         }
                     }
                 ],
-                "order": [3, "desc"]
+                "order": [4, "desc"]
             });
         }
     });

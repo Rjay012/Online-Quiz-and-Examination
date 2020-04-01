@@ -25,7 +25,7 @@ function checkExaminee() {
                     "<h4 class='text-center'>RESULT: (" + decodeURIComponent(getParam("title")) + ")</h4>" +
                     "</div>" +
                     "<div class='panel-body'>" +
-                    
+
                     "</div>" +
                     "</div>" +
                     "</div>" +
@@ -60,30 +60,30 @@ function checkExaminee() {
                 $(".content").html(
                     "<div class='col-md-10'>" +
                     "<div class='well'>" +
-                        "<div class='text-center'>" +
-                            "<h3 id='exam-title'></h3>" +
-                        "</div>" +
-                        "<div class='exam-details'>" +
-                            "<p style='word-wrap: break-word' id='instruction'></p>" +
-                            "<p style='word-wrap: break-word' id='note'></p>" +
-                        "</div>" +
-                        "<div id='exam'>" +
-                            
-                        "</div>" +
+                    "<div class='text-center'>" +
+                    "<h3 id='exam-title'></h3>" +
+                    "</div>" +
+                    "<div class='exam-details'>" +
+                    "<p style='word-wrap: break-word' id='instruction'></p>" +
+                    "<p style='word-wrap: break-word' id='note'></p>" +
+                    "</div>" +
+                    "<div id='exam'>" +
+
+                    "</div>" +
                     "</div>" +
                     "</div>" +
 
                     "<div class='col-md-2'>" +
-                        "<div class='sidebar-nav-fixed pull-right affix'>" +
-                            "<div class='well'>" +
-                                "<div class='timer timer1 alert alert-danger btn-block'></div>" +
-                            "</div>" +
+                    "<div class='sidebar-nav-fixed pull-right affix'>" +
+                    "<div class='well'>" +
+                    "<div class='timer timer1 alert alert-danger btn-block'></div>" +
+                    "</div>" +
 
-                            "<div class='well'>" +
-                                "<button class='timerstart btn btn-success btn-block' type='button' onclick='start()'>Start Exam</button>" +
-                                "<button class='btn btn-info btn-block' id='btnFinishExam' onclick='finish()' disabled>Finished Exam</button>" +
-                            "</div>" +
-                        "</div>" +
+                    "<div class='well'>" +
+                    "<button class='timerstart btn btn-success btn-block' type='button' onclick='start()'>Start Exam</button>" +
+                    "<button class='btn btn-info btn-block' id='btnFinishExam' onclick='finish()' disabled>Finished Exam</button>" +
+                    "</div>" +
+                    "</div>" +
                     "</div>"
                 );
                 readyDetails();
@@ -103,25 +103,20 @@ function checkExaminee() {
     );
 }
 
-function markSelectedRadioBtn() {  //mark student selected answer (radio button)
-    $(".lightgreen, .salmon").each(function () {
-        $(this).children().prop("checked", true);
-    });
-}
-
 function previewExamResult() {
     readyQuestion("preview-examresult-wrapper");
+    $(".modal-title").html(decodeURIComponent(getParam("title")));
     $(".lightgreen").css("background-color", "lightgreen");
     $(".lightblue").css("background-color", "lightblue");
     $(".salmon").css("background-color", "salmon");
     $(".has-error, .lightblue, .salmon").parent().addClass("wrong-ans");
     $(".has-error").parent().addClass("with-checkbox");  //add another class to hold checkboxes
+    $(".lightgreen, .salmon").children().prop("checked", true);  //mark student selected answer (radio button)
 
     createCheckboxToShowAnswer();
     assignValueToCheckbox();
-    markSelectedRadioBtn();
 
-    $(".examineeAnsController").prop("disabled", true); 
+    $(".examineeAnsController").prop("disabled", true);
 }
 
 function createCheckboxToShowAnswer() {
@@ -133,7 +128,7 @@ function createCheckboxToShowAnswer() {
             "Correct Answer <input id='ch-wrong-ans" + c + "' type='checkbox' onchange='triggerCheckbox(" + c + ", this.value)' />" +
             "</div>"
         );
-    c++;
+        c++;
     });
 }
 
@@ -269,10 +264,23 @@ function getExamType() {
 
 function displayResultGuide() {
     return [
+        "<div id='guide-wrapper'>" +
+        "<table class='table table-bordered'>" +
+        "<thead>" +
+        "<tr><th class='text-center' colspan='3'>TEST SUMMARY</th></tr>" +
+        "<tr>" +
+        "<th class='text-center'>Correct Answer(s)</th>" +
+        "<th class='text-center'>Unanswered</th>" +
+        "<th class='text-center'>Wrong Answer(s)</th>" +
+        "</tr>" +
+        "</thead>" +
+        "<tbody></tbody>" +
+        "</table>" +
         "<strong>Result Guide:</strong><br />" +
         "<span class='label label-success'><i class='fas fa-check-square' aria-hidden='true'></i> Answer is Correct</span> - " +
         "<span class='label label-info'><i class='fas fa-check-square' aria-hidden='true'></i> Correct Answer</span> - " +
-        "<span class='label label-danger'>Wrong Answer</span><br /><br />"
+        "<span class='label label-danger'>Wrong Answer</span>" +
+        "</div><br />"
     ];
 }
 
@@ -299,7 +307,7 @@ function readyQuestion(examWrapper) {
             $(".timerstart").prop("disabled", false);
         });
     }
-    else {
+    else {   //pure typed exam
         getQuestion(examWrapper, ...type);
     }
 }
@@ -333,7 +341,7 @@ function buildChoicesAndFields(result) {
         qProperty += "<div class='panel panel-success'>" +
             "<div class='panel-body'>" +
             "<p style='word-wrap: break-word'>" +
-            "<strong>" + (i++) + ". " + value + "(" + key + ")" + "</strong>" +
+            "<strong>" + (i++) + ". " + value + "</strong>" +
             "</p><br />" +
             "<div>" +  //has dynamic class
             "<input type='hidden' value='" + key + "' />" +
@@ -352,7 +360,7 @@ function getChoicesAndKeys(qID, qType) {
         { qID: qID, examID: parseInt(decodeURIComponent(getParam("id"))), hasAdditionalQuery: "" }  //added examID
     ).done(function (result) {
         var l = (qType == "true or false") ? 84 : 65;   //define the type of letter that start for T/F: 84 and MULTIPLE CHOICE: 65
-        
+
         $.each(result, function (key, value) {
             if (qType === "multiple choice" || qType === "true or false") {
                 var valL = String.fromCharCode((l == 85) ? 70 : l);
@@ -360,14 +368,14 @@ function getChoicesAndKeys(qID, qType) {
                 var keyAns = markAnsKey(qID, valL.toLowerCase());  //returns color
 
                 color = ((studAns !== "" && keyAns !== "") ? "lightgreen" : (studAns + keyAns));
-                ck += "<p class='" + color + "' style='word-wrap: break-word'>" + 
+                ck += "<p class='" + color + "' style='word-wrap: break-word'>" +
                     "<input class='examineeAnsController' type='radio' name='choice" + z + "' value='" + valL.toLowerCase() + "' onchange='saveAnswer(" + qID + ", this.value, \"" + qType + "\")' /> " + valL + ". " + value +
                     "</p><br />";
                 l++;
             }
             else {
                 color = markAnsKey(qID, value);
-                ck += "<div class='form-group has-" + ((color === "lightblue") ? "success" : "error") + " has-feedback col-sm-6'>" + 
+                ck += "<div class='form-group has-" + ((color === "lightblue") ? "success" : "error") + " has-feedback col-sm-6'>" +
                     "<input class='form-control input-sm examineeAnsController " + qID + "' value='" + value + "' type='text' onkeyup='saveAnswer(" + key + ", this.value, \"" + qType + "\")' />" +
                     "</div>";
             }
@@ -382,7 +390,7 @@ function markAnsKey(qID, choice) {
     fetchData("WebServices//TakeExamService.asmx/GetKey", { qID: qID })
         .done(function (result) {
             $.each(result, function (keyID, key) {
-                if (choice === key) a = "lightblue";  
+                if (choice === key) a = "lightblue";
             });
         });
     return a;
@@ -402,12 +410,12 @@ function studentAns(qID, choice) {
 function getQuestionType(qID) {
     var type = "";
     fetchData("WebServices//TakeExamService.asmx/QuestionType", { qID: qID })
-    .done(function (result) {
-        type = result;
-    });
+        .done(function (result) {
+            type = result;
+        });
     return type;
 }
- 
+
 function saveAnswer(qID, ans, qType) {
     fetchData("WebServices//TakeExamService.asmx/SaveAnswer", {
         qId: qID,
@@ -425,13 +433,14 @@ function finishExam() {
 function start() {
     readyQuestion("exam");
     $("#btnFinishExam").prop("disabled", false);
-    $(".has-feedback :input").val("");  
+    $(".has-feedback :input").val("");
     $(".has-feedback").prop("class", "form-group");
     $(".panel panel-success").prop("class", "panel panel-default");
+    $("#guide-wrapper").html("");  //guide will only show when exam finished
 }
 
 function finish() {
     if (confirm("Sure you want to finish your exam?") == true) {
         finishExam();
-    } 
+    }
 }
