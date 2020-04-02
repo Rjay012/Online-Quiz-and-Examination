@@ -115,6 +115,7 @@ function previewExamResult() {
 
     createCheckboxToShowAnswer();
     assignValueToCheckbox();
+    displayTestSummary();
 
     $(".examineeAnsController").prop("disabled", true);
 }
@@ -274,14 +275,32 @@ function displayResultGuide() {
         "<th class='text-center'>Wrong Answer(s)</th>" +
         "</tr>" +
         "</thead>" +
-        "<tbody></tbody>" +
+        "<tbody id='tblTestSummary'></tbody>" +
         "</table>" +
         "<strong>Result Guide:</strong><br />" +
         "<span class='label label-success'><i class='fas fa-check-square' aria-hidden='true'></i> Answer is Correct</span> - " +
-        "<span class='label label-info'><i class='fas fa-check-square' aria-hidden='true'></i> Correct Answer</span> - " +
-        "<span class='label label-danger'>Wrong Answer</span>" +
+        "<span class='label label-info'><i class='far fa-check-square'></i> Correct Answer</span> - " +
+        "<span class='label label-danger'><i class='fas fa-times-square'></i> Wrong Answer</span>" +
         "</div><br />"
     ];
+}
+
+function hasValue() {
+    return $(".form-control").filter(function () { return $(this).val() == "no answer"; }).length;  //get null answer(s) input element
+}
+
+function displayTestSummary() {
+    var correctAnswer = parseInt($(".panel-success").length);
+    var unAnswered = parseInt(($(".wrong-ans").children(".lightblue").length + hasValue()) - $(".wrong-ans").children(".salmon").length);
+    var wrongAnswer = parseInt($(".panel-danger").length);
+
+    $("#tblTestSummary").html(
+        "<tr>" +
+        "<td class='text-center'>" + correctAnswer + "</td>" +
+        "<td class='text-center'>" + unAnswered + "</td>" +
+        "<td class='text-center'>" + wrongAnswer + "</td>" +
+        "</tr>"
+    );
 }
 
 function readyQuestion(examWrapper) {
