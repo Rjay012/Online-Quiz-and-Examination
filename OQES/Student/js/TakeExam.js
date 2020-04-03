@@ -285,22 +285,41 @@ function displayResultGuide() {
     ];
 }
 
-function hasValue() {
+function hasNullValue() {
     return $(".form-control").filter(function () { return $(this).val() == "no answer"; }).length;  //get null answer(s) input element
 }
 
 function displayTestSummary() {
     var correctAnswer = parseInt($(".panel-success").length);
-    var unAnswered = parseInt(($(".wrong-ans").children(".lightblue").length + hasValue()) - $(".wrong-ans").children(".salmon").length);
+    var unAnswered = parseInt(($(".wrong-ans").children(".lightblue").length + hasNullValue()) - $(".wrong-ans").children(".salmon").length);
     var wrongAnswer = parseInt($(".panel-danger").length);
 
     $("#tblTestSummary").html(
         "<tr>" +
-        "<td class='text-center'>" + correctAnswer + "</td>" +
-        "<td class='text-center'>" + unAnswered + "</td>" +
-        "<td class='text-center'>" + wrongAnswer + "</td>" +
+        "<td class='text-center' onclick='filterCorrectAnswer()'>" + correctAnswer + "</td>" +
+        "<td class='text-center' onclick='filterUnAnsweredQuestions()'>" + unAnswered + "</td>" +
+        "<td class='text-center' onclick='filterIncorrectAnswer()'>" + wrongAnswer + "</td>" +
         "</tr>"
     );
+}
+
+function filterCorrectAnswer() {
+    $(".panel-success").removeClass("hidden");
+    $(".panel-danger").addClass("hidden");
+}
+
+function filterUnAnsweredQuestions() {
+    $(".panel-success, .panel-danger").removeClass("hidden");
+    $(".salmon").closest(".panel-danger").addClass("hidden");
+    $(".panel-success").addClass("hidden");
+    //with input fields
+    $(".form-group").children("input[value!='no answer']").closest(".panel-danger").addClass("hidden");
+    $(".form-group").children("input[value='no answer']").closest(".panel-danger").removeClass("hidden"); 
+}
+
+function filterIncorrectAnswer() {
+    $(".panel-danger").removeClass("hidden");
+    $(".panel-success").addClass("hidden");
 }
 
 function readyQuestion(examWrapper) {
@@ -360,7 +379,7 @@ function buildChoicesAndFields(result) {
         qProperty += "<div class='panel panel-success'>" +
             "<div class='panel-body'>" +
             "<p style='word-wrap: break-word'>" +
-            "<strong>" + (i++) + ". " + value + "</strong>" +
+            "<strong>" + (i++) + ". " + value + "(" + key + ")" + "</strong>" +
             "</p><br />" +
             "<div>" +  //has dynamic class
             "<input type='hidden' value='" + key + "' />" +
