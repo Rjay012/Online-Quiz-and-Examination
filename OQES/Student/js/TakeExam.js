@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿var z = 1, noOfQuestion = 1;
+$(document).ready(function () {
     checkExaminee();
 });
 
@@ -104,6 +105,7 @@ function checkExaminee() {
 }
 
 function previewExamResult() {
+    noOfQuestion = 1; //reset 
     readyQuestion("preview-examresult-wrapper");
     $(".modal-title").html(decodeURIComponent(getParam("title")));
     $(".lightgreen").css("background-color", "lightgreen");
@@ -266,6 +268,7 @@ function getExamType() {
 function displayResultGuide() {
     return [
         "<div id='guide-wrapper'>" +
+        "<button class='btn btn-primary btn-sm pull-right' type='button' id='btnShowAll'>Show All</button><br /><br />" +
         "<table class='table table-bordered'>" +
         "<thead>" +
         "<tr><th class='text-center' colspan='3'>TEST SUMMARY</th></tr>" +
@@ -296,30 +299,68 @@ function displayTestSummary() {
 
     $("#tblTestSummary").html(
         "<tr>" +
-        "<td class='text-center' onclick='filterCorrectAnswer()'>" + correctAnswer + "</td>" +
-        "<td class='text-center' onclick='filterUnAnsweredQuestions()'>" + unAnswered + "</td>" +
-        "<td class='text-center' onclick='filterIncorrectAnswer()'>" + wrongAnswer + "</td>" +
+        "<td class='text-center' onclick='filterCorrectAnswer($(this))'>" + correctAnswer + "</td>" +
+        "<td class='text-center' onclick='filterUnAnsweredQuestions($(this))'>" + unAnswered + "</td>" +
+        "<td class='text-center' onclick='filterIncorrectAnswer($(this))'>" + wrongAnswer + "</td>" +
         "</tr>"
     );
 }
 
-function filterCorrectAnswer() {
-    $(".panel-success").removeClass("hidden");
-    $(".panel-danger").addClass("hidden");
+$(document).on("click", "#btnShowAll", function () {
+    $(".panel").removeClass("hidden");
+    $("td").css({ "background-color": "white" });
+    countPartitionedTypeQuestions(4);
+});
+
+function highlightTD(td) {
+    td.css({ "background-color": "lightblue" });
+    td.siblings().css({ "background-color": "white" });
 }
 
-function filterUnAnsweredQuestions() {
-    $(".panel-success, .panel-danger").removeClass("hidden");
+function filterCorrectAnswer(elem) {
+    highlightTD(elem);
+    $(".panel-success").removeClass("hidden");
+    $(".panel-danger").addClass("hidden");
+    countPartitionedTypeQuestions(1);
+}
+
+function filterUnAnsweredQuestions(elem) {
+    highlightTD(elem);
+    $(".panel").removeClass("hidden");  //you've changed class='.panel-success, .panel-danger'
     $(".salmon").closest(".panel-danger").addClass("hidden");
     $(".panel-success").addClass("hidden");
     //with input fields
     $(".form-group").children("input[value!='no answer']").closest(".panel-danger").addClass("hidden");
-    $(".form-group").children("input[value='no answer']").closest(".panel-danger").removeClass("hidden"); 
+    $(".form-group").children("input[value='no answer']").closest(".panel-danger").removeClass("hidden"); //unhide unAnswered input fields
+    countPartitionedTypeQuestions(2);
 }
 
-function filterIncorrectAnswer() {
+function countPartitionedTypeQuestions(categ) {  //number of every questions that is filtered on test summary
+    var ctr = 1, itemCount = 1;
+    $(".partitioned").each(function () {
+        switch (categ) {
+            case 1:
+                itemCount = parseInt($(this).children(".panel-success").length);
+                break;
+            case 2:
+                itemCount = parseInt($(this).children(".panel-danger").not(".hidden").length);
+                break;
+            case 3:
+                itemCount = parseInt($(this).children(".panel-danger").length);
+                break;
+            default:
+                itemCount = parseInt($(this).children(".panel").length);  //restore to default number of items, show all clicked
+        }
+        $("#itemCount" + ctr).html(itemCount);
+        ctr++;
+    });
+}
+
+function filterIncorrectAnswer(elem) {
+    highlightTD(elem);
     $(".panel-danger").removeClass("hidden");
     $(".panel-success").addClass("hidden");
+    countPartitionedTypeQuestions(3);
 }
 
 function readyQuestion(examWrapper) {
@@ -335,9 +376,10 @@ function readyQuestion(examWrapper) {
             var headerType = "";
             var i = 1, indx = 0;
             $.each(result, function (key, value) {
-                type[indx++] = key;
-                headerType += "<h4>PART " + i + ": " + (key.charAt(0).toUpperCase() + key.substring(1)) + " - (" + value + " item/s)</h4><div id='questionaire-wrapper" + i + "'></div>";
-                i++;
+                type[indx] = key;
+                headerType += "<h4>PART " + i + ": " + (key.charAt(0).toUpperCase() + key.substring(1)) + " - (<span id='itemCount" + i + "'>" + value + "</span> item/s)</h4>" +
+                              "<div class='partitioned' id='questionaire-wrapper" + i + "'></div>";
+                i++; indx++;
             });
 
             $("#" + examWrapper).html(displayResultGuide() + headerType);
@@ -350,7 +392,6 @@ function readyQuestion(examWrapper) {
     }
 }
 
-var z = 1;
 function getQuestion(examWrapper, ...type) {
     if (type.length > 0) {  //if array has value
         for (var x in type) {
@@ -374,12 +415,12 @@ function getQuestion(examWrapper, ...type) {
 }
 
 function buildChoicesAndFields(result) {
-    var qProperty = "", i = 1;
+    var qProperty = "";
     $.each(result, function (key, value) {
         qProperty += "<div class='panel panel-success'>" +
             "<div class='panel-body'>" +
             "<p style='word-wrap: break-word'>" +
-            "<strong>" + (i++) + ". " + value + "(" + key + ")" + "</strong>" +
+            "<strong>" + (noOfQuestion++) + ". " + value + "</strong>" +
             "</p><br />" +
             "<div>" +  //has dynamic class
             "<input type='hidden' value='" + key + "' />" +
