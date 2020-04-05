@@ -1,66 +1,32 @@
-﻿$("#btnPreviewQuestionaire").click(function () {
+﻿var counter = 1;
+$("#btnPreviewQuestionaire").click(function () {
     loadQuestionaire();
 });
 
 function loadQuestionaire() {
-    var questionaireWrap = fetchData(
+    fetchData(
         { examID: decodeURIComponent(getParam("id")) },
         "WebServices//ExamDetailsService.asmx/" + ((getExamType() === "all type") ? "PartitionedQuestionType" : "ViewQuestionaire")
-    );
-    questionaireWrap.done(function (result) {
-        var type = [], content = "";
+    ).done(function (result) {
+        var content = "";
         if (getExamType() === "all type") {
-            var c = 1, i = 0;
+            var c = 1, anchorTag = "";
             $.each(result, function (key, value) {
-                type[i++] = key;
-                content += "<div class='myAccordion' id='accordion" + c + "'>" +
-                    "<div class='panel panel-success'>" +
-                    "<div class='panel-heading'>" +
-                    "<h4 id='qRange" + c + "' class='panel-title' data-toggle='collapse' href='#collapse" + c + "'>" +
-                    "<a data-toggle='collapse' href='#collapse" + c + "'>PART " + c + ": " + key.charAt(0).toUpperCase() + key.substring(1) + "(" + value + " item/s)</a>" +
-                    "</h4>" +
-                    "</div>" +
-
-                    "<div id='collapse" + c + "' class='collapse' data-parent='#accordion" + c + "'>" +
-                    "<div class='panel-body' id='body" + c + "'>" +
-
-                    "</div>" +
-                    "</div>" +
-                    "</div>" +
-                    "</div><br />";
+                anchorTag = "<a class='showQuestion' data-toggle='collapse' href='#collapse" + c + "' type='" + key + "'>PART " + c + ": " + key.charAt(0).toUpperCase() + key.substring(1) + "(" + value + " item/s)</a>";
+                content += buildQuestionaireAccordionWrapper(c, anchorTag);
                 c++;
             });
             $("#questionaire-content").html(content);
         }
         else {
-            var i = 1;
-            var noOfPanel = parseInt(result);
+            var noOfPanel = parseInt(result), i = 1;
 
             //control the following accordion to produce
-            if ((noOfPanel % 10) != 0) {
-                noOfPanel = (noOfPanel / 10) + 1;
-            }
-            else {
-                noOfPanel /= 10;
-            }
+            noOfPanel = ((noOfPanel % 10) != 0) ? (noOfPanel / 10) + 1 : noOfPanel /= 10;
 
             //build the content
             do {
-                content += "<div class='myAccordion' id='accordion" + i + "'>" +
-                    "<div class='panel panel-success'>" +
-                    "<div class='panel-heading'>" +
-                    "<h4 id='qRange" + i + "' class='panel-title' data-toggle='collapse' href='#collapse" + i + "'>" +
-
-                    "</h4>" +
-                    "</div>" +
-
-                    "<div id='collapse" + i + "' class='collapse' data-parent='#accordion" + i + "'>" +
-                    "<div class='panel-body' id='body" + i + "'>" +
-
-                    "</div>" +
-                    "</div>" +
-                    "</div>" +
-                    "</div><br />";
+                content += buildQuestionaireAccordionWrapper(i, "");
                 i++;
             } while (i <= noOfPanel);
 
@@ -74,19 +40,44 @@ function loadQuestionaire() {
                 var r = 1;
                 for (var x = 1; x <= parseInt(noOfPanel); x++) {
                     if (x == parseInt(noOfPanel)) {  //last questionaire panel
-                        $("#qRange" + x).html("<a data-toggle='collapse' href='#collapse" + x + "'>Question " + r + " - " + result + "</a>");
+                        $("#qRange" + x).html("<a class='showQuestion' data-toggle='collapse' rowOffset='" + r + "' href='#collapse" + x + "'>Question " + r + " - " + result + "</a>");
                     }
                     else {
-                        $("#qRange" + x).html("<a data-toggle='collapse' href='#collapse" + x + "'>Question " + r + " - " + (r + 9) + "</a>");
+                        $("#qRange" + x).html("<a class='showQuestion' data-toggle='collapse' rowOffset='" + r + "' href='#collapse" + x + "'>Question " + r + " - " + (r + 9) + "</a>");
                     }
                     r += 10;
                 }
             }
-
         }
-        extractQuestionaire(parseInt($(".myAccordion").length), ...type);
     });
 }
+
+function buildQuestionaireAccordionWrapper(i, aTag) {
+    return [
+        "<div class='myAccordion' id='accordion" + i + "'>" +
+        "<div class='panel panel-success'>" +
+        "<div class='panel-heading'>" +
+        "<h4 id='qRange" + i + "' class='panel-title' data-toggle='collapse' href='#collapse" + i + "'>" +
+        aTag +
+        "</h4>" +
+        "</div>" +
+
+        "<div id='collapse" + i + "' class='collapse myCollapse' data-parent='#accordion" + i + "'>" +
+        "<div class='panel-body' id='body" + i + "'>" +
+
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div><br />"
+    ];
+}
+
+$(document).on("click", ".showQuestion", function () {
+    var panelBody = $(this).closest(".panel-success").children(".myCollapse").children().html();
+    if (panelBody == "") {  //for easy loading (on second attempt), don't reload the panels content if they already have
+        extractQuestionaire($(this));
+    }
+});
 
 function appendChoicesOrAnskeys(key) {
     var ck = "";   //contains either choices or answer keys depends on question types
@@ -130,47 +121,32 @@ var fetchData = function (data, dataURL) {
     });
 }
 
-function extractQuestionaire(i, ...type) {
-    var questionaire = "", counter = 1;
-    if (parseInt(type.length) > 0) {
-        for (var i in type) {
-            questionaire = fetchData(
-                {
-                    examID: decodeURIComponent(getParam("id")),
-                    type: type[i]
-                }, "WebServices//ExamDetailsService.asmx/GetPartitionedQuestionaire"
-            );
+function extractQuestionaire(anchorElem) {
+    var userDefinedAttr = anchorElem.attr("type");
+    var questionaire = "";
 
-            questionaire.done(function (result) {
-                $.each(result, function (key, value) {
-                    $("#body" + (parseInt(i) + 1)).append(buildTableForQuestionaire(key, value, counter++));
-                });
-            });
-        }
+    //target to update code
+    if (userDefinedAttr != undefined) {
+        questionaire = fetchData({ examID: decodeURIComponent(getParam("id")), type: userDefinedAttr },
+            "WebServices//ExamDetailsService.asmx/GetPartitionedQuestionaire"
+        );
     }
     else {
-        questionaire = fetchData(
-            { examID: decodeURIComponent(getParam("id")) }, 
-            "WebServices//ExamDetailsService.asmx/GetQuestionaire"
+        userDefinedAttr = parseInt(anchorElem.attr("rowOffset"));
+        counter = userDefinedAttr;
+        questionaire = fetchData({ examID: decodeURIComponent(getParam("id")), row: (userDefinedAttr - 1) },
+            "WebServices//ExamDetailsService.asmx/GetOffsetQuestionaire"
         );
-
-        questionaire.done(function (result) {
-            var question = "", c = 1;
-            //display question(s) to each table
-            $.each(result, function (key, value) {
-                question += (buildTableForQuestionaire(key, value, counter++));
-                if ((c++) == 10) {
-                    question += "|"; c = 1;
-                }
-            });
-
-            var offsetArray = question.split("|");
-            //display each question to accordion(s) body
-            for (var c = 0; c < i; c++) {
-                $("#body" + (c + 1)).html(offsetArray[c]);
-            }
-        });
     }
+
+    questionaire.done(function (result) {
+        var question = "";
+        //display question(s) to each table
+        $.each(result, function (key, value) {
+            question += buildTableForQuestionaire(key, value, counter++);
+        });
+        anchorElem.closest(".panel-success").children(".myCollapse").children().html(question);
+    });
 }
 
 function buildTableForQuestionaire(key, value, c) {
