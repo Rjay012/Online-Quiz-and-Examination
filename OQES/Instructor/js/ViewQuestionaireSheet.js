@@ -155,15 +155,19 @@ function extractQuestionaire(i, ...type) {
         );
 
         questionaire.done(function (result) {
-            var question = "";
+            var question = "", c = 1;
             //display question(s) to each table
             $.each(result, function (key, value) {
-                question += buildTableForQuestionaire(key, value, counter++);
+                question += (buildTableForQuestionaire(key, value, counter++));
+                if ((c++) == 10) {
+                    question += "|"; c = 1;
+                }
             });
 
+            var offsetArray = question.split("|");
             //display each question to accordion(s) body
             for (var c = 0; c < i; c++) {
-                $("#body" + (c + 1)).html(question);
+                $("#body" + (c + 1)).html(offsetArray[c]);
             }
         });
     }
