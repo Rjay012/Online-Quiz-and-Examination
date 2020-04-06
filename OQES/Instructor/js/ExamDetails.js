@@ -440,7 +440,7 @@ function loadQuestionaireBadge() {
             var badge = [];
             $.each(result, function (key, value) {
                 n = (n >= 1 && n <= 9) ? ("0" + n) : n;
-                badge.push("<span class='label label-success' id='q-badge-" + n + "' onclick='showQuestion(" + parseInt(key) + ", \"" + value + "\", \"" + getChoicesAndKeys(parseInt(key), "GetChoice") + "\", \"" + getChoicesAndKeys(parseInt(key), "GetAnswerKey") + "\", " + n + ")' style='cursor: pointer'>" + n + "</span>&nbsp;");
+                badge.push("<span class='label label-success' onclick='showQuestion(" + parseInt(key) + ", \"" + value + "\", \"" + getChoicesAndKeys(parseInt(key), "GetChoice") + "\", \"" + getChoicesAndKeys(parseInt(key), "GetAnswerKey") + "\", " + n + ")' style='cursor: pointer'>" + n + "</span>&nbsp;");  //removed id='q-badge-" + n + "'
                 n++;
             });
             $("#questionBadges").html(badge);
@@ -463,6 +463,11 @@ function getChoicesAndKeys(qID, methodName) {
 function enableControls() {
     $(".updateControl").prop("disabled", false);
 }
+
+$(document).on("click", ".label", function () {  //label question badge that is selected
+    $(this).addClass("label-danger");
+    $(this).siblings(".label-danger").removeClass("label-danger");
+});
 
 function showQuestion(qID, question, choice, ansKey, autoNo) {
     $("#txtQuestion").val(question); $("#hidTXTQuestion").val(qID);
