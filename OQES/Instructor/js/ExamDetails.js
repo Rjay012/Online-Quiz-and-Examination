@@ -3,17 +3,11 @@
 };
 
 function loadDetails() {
-    $.ajax({
-        type: "post",
-        dataType: "json",
-        url: "WebServices//ExamDetailsService.asmx/LoadDetail",
-        data: {
-            examId: decodeURIComponent(getParam("id"))
-        },
-        success: function (result) {
+    fetchData({ examId: decodeURIComponent(getParam("id")) }, "WebServices//ExamDetailsService.asmx/LoadDetail").done(
+        function (result) {
             $("#exam-content").html(displayContent(result));
         }
-    });
+    );
 }
 
 function displayContent(result) {
@@ -440,14 +434,8 @@ function getExamType() {
 }
 
 function loadQuestionaireBadge() {
-    $.ajax({
-        url: "WebServices//ExamDetailsService.asmx/GetQuestionaire",
-        type: "post",
-        dataType: "json",
-        data: {
-            examID: decodeURIComponent(getParam("id"))
-        },
-        success: function (result) {
+    fetchData({ examID: decodeURIComponent(getParam("id")), row: -1 }, "WebServices//ExamDetailsService.asmx/GetQuestionaire")
+        .done(function (result) {
             var n = 1;
             var badge = [];
             $.each(result, function (key, value) {
@@ -456,28 +444,19 @@ function loadQuestionaireBadge() {
                 n++;
             });
             $("#questionBadges").html(badge);
-        }
-    });
+        });
 }
 
 function getChoicesAndKeys(qID, methodName) {
-    var arrKey = "";
-    var arrVal = "";
-    $.ajax({
-        url: "WebServices//ExamDetailsService.asmx/" + methodName,
-        type: "post",
-        dataType: "json",
-        data: {
-            qID: qID
-        },
-        async: false,
-        success: function (result) {
+    var arrKey = "", arrVal = "";
+    fetchData({ qID: qID }, "WebServices//ExamDetailsService.asmx/" + methodName).done(
+        function (result) {
             $.each(result, function (key, value) {
                 arrKey += key + "|";
                 arrVal += value + "|";
             });
         }
-    });
+    );
     return arrKey + "~" + arrVal;
 }
 
@@ -534,7 +513,6 @@ function getQuestionType(qID) {
             type = result;
         }
     });
-
     return type;
 }
 

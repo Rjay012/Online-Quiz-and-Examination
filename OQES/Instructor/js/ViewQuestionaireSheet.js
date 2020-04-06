@@ -10,10 +10,11 @@ function loadQuestionaire() {
     ).done(function (result) {
         var content = "";
         if (getExamType() === "all type") {
-            var c = 1, anchorTag = "";
+            var c = 1, anchorTag = "", offset = 1;
             $.each(result, function (key, value) {
-                anchorTag = "<a class='showQuestion' data-toggle='collapse' href='#collapse" + c + "' type='" + key + "'>PART " + c + ": " + key.charAt(0).toUpperCase() + key.substring(1) + "(" + value + " item/s)</a>";
+                anchorTag = "<a class='showQuestion' data-toggle='collapse' href='#collapse" + c + "' type='" + key + "' offset='" + offset + "'>PART " + c + ": " + key.charAt(0).toUpperCase() + key.substring(1) + "(" + value + " item/s)</a>";
                 content += buildQuestionaireAccordionWrapper(c, anchorTag);
+                offset += value;
                 c++;
             });
             $("#questionaire-content").html(content);
@@ -34,7 +35,7 @@ function loadQuestionaire() {
 
             //label each accordion from question 1-10 and so on.
             if (parseInt(result) > 1 && parseInt(result) < 10) {
-                $("#qRange1").html("<a data-toggle='collapse' href='#collapse1'>Question " + 1 + " - " + parseInt(result) + "</a>");
+                $("#qRange1").html("<a class='showQuestion' data-toggle='collapse' rowOffset='1' href='#collapse1'>Question " + 1 + " - " + parseInt(result) + "</a>");
             }
             else {
                 var r = 1;
@@ -123,23 +124,20 @@ var fetchData = function (data, dataURL) {
 
 function extractQuestionaire(anchorElem) {
     var userDefinedAttr = anchorElem.attr("type");
-    var questionaire = "";
 
-    //target to update code
-    if (userDefinedAttr != undefined) {
-        questionaire = fetchData({ examID: decodeURIComponent(getParam("id")), type: userDefinedAttr },
-            "WebServices//ExamDetailsService.asmx/GetPartitionedQuestionaire"
-        );
+    if (userDefinedAttr != undefined) {  //mixed type exam
+        counter = parseInt(anchorElem.attr("offset"));
+        beginExtractQuestionaire({ examID: decodeURIComponent(getParam("id")), type: userDefinedAttr }, "GetPartitionedQuestionaire", anchorElem);
     }
-    else {
+    else { //raw type exam
         userDefinedAttr = parseInt(anchorElem.attr("rowOffset"));
         counter = userDefinedAttr;
-        questionaire = fetchData({ examID: decodeURIComponent(getParam("id")), row: (userDefinedAttr - 1) },
-            "WebServices//ExamDetailsService.asmx/GetOffsetQuestionaire"
-        );
+        beginExtractQuestionaire({ examID: decodeURIComponent(getParam("id")), row: (userDefinedAttr - 1) }, "GetQuestionaire", anchorElem);
     }
+}
 
-    questionaire.done(function (result) {
+function beginExtractQuestionaire(data, methodName, anchorElem) {
+    fetchData(data, "WebServices//ExamDetailsService.asmx/" + methodName).done(function (result) {
         var question = "";
         //display question(s) to each table
         $.each(result, function (key, value) {

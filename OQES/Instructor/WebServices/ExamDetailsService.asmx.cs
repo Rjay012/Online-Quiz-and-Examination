@@ -68,22 +68,16 @@ namespace OQES.Instructor.WebServices
         }
 
         [WebMethod]
-        public void GetQuestionaire(int examID)
+        public void GetQuestionaire(int examID, int row)  //filter either type/row
         {
             Questionaire createBadge = new Questionaire();
             string query = "SELECT [question_id], [question]" +
                            "FROM [exam_question]" +
                            "WHERE [exam_id] = " + examID;
-            Context.Response.Write(JsonConvert.SerializeObject(createBadge.GetQuestion(query)));
-        }
-
-        [WebMethod]
-        public void GetOffsetQuestionaire(int examID, int row)
-        {
-            Questionaire createBadge = new Questionaire();
-            string query = "SELECT [question_id], [question]" +
-                           "FROM [exam_question]" +
-                           "WHERE [exam_id] = " + examID + " ORDER BY [question_id] OFFSET " + row + " ROWS FETCH NEXT 10 ROWS ONLY";
+            if(row >= 0)
+            {
+                query += " ORDER BY [question_id] OFFSET " + row + " ROWS FETCH NEXT 10 ROWS ONLY";
+            }
             Context.Response.Write(JsonConvert.SerializeObject(createBadge.GetQuestion(query)));
         }
 
