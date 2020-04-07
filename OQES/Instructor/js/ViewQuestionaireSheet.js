@@ -58,15 +58,10 @@ function buildQuestionaireAccordionWrapper(i, aTag) {
         "<div class='myAccordion' id='accordion" + i + "'>" +
         "<div class='panel panel-success'>" +
         "<div class='panel-heading'>" +
-        "<h4 id='qRange" + i + "' class='panel-title' data-toggle='collapse' href='#collapse" + i + "'>" +
-        aTag +
-        "</h4>" +
+        "<h4 id='qRange" + i + "' class='panel-title' data-toggle='collapse' href='#collapse" + i + "'>" + aTag + "</h4>" +
         "</div>" +
-
         "<div id='collapse" + i + "' class='collapse myCollapse' data-parent='#accordion" + i + "'>" +
-        "<div class='panel-body' id='body" + i + "'>" +
-
-        "</div>" +
+        "<div class='panel-body' id='body" + i + "'></div>" +
         "</div>" +
         "</div>" +
         "</div><br />"
