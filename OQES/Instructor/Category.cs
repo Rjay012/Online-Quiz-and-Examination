@@ -4,12 +4,17 @@ using System.Data.SqlClient;
 
 namespace OQES.Instructor
 {
-    public class Category
+    public class Category : DataTableParam
     {
         public int categoryID { get; set; }
         public string category { get; set; }
 
         protected readonly SqlConnection conn = Main.GetDBConnection();
+
+        public Category()
+        {
+
+        }
 
         #region "(INSTRUCTOR & ADMIN) Subject Page"
         public string categories(string functionName)
@@ -34,7 +39,8 @@ namespace OQES.Instructor
         #region "(ADMIN) CATEGORY PAGE"
         public List<Category> LoadCategory()
         {
-            var cmd = new SqlCommand("SELECT * FROM [category]", conn);
+            var cmd = new SqlCommand("SELECT *" +
+                                     "FROM [category]", conn);
             return BindCategory(cmd);
         }
 
@@ -59,7 +65,8 @@ namespace OQES.Instructor
 
         public List<Category> LoadCategory(int categoryID)  
         {
-            var cmd = new SqlCommand("SELECT * FROM [category]" +
+            var cmd = new SqlCommand("SELECT *" +
+                                     "FROM [category]" +
                                      "WHERE [category_id] = " + categoryID, conn);
             return BindCategory(cmd);
         }

@@ -16,10 +16,19 @@ namespace OQES.Instructor.WebServices
         JavaScriptSerializer js = new JavaScriptSerializer();
 
         [WebMethod(EnableSession = true)]
-        public void LoadExam(string title, int subjID, string status)
+        public void LoadExam(int iDisplayLength, int iDisplayStart, int iSortCol_0, string sSortDir_0, string sSearch)
         {
-            Exam le = new Exam((string)Session["id"]);
-            Context.Response.Write(js.Serialize(le.loadExam(title, subjID, status)));
+            Exam le = new Exam((string)Session["id"], iDisplayLength, iDisplayStart, iSortCol_0, sSortDir_0, sSearch);
+            int noOfCategory = Main.dataCounter("SELECT COUNT(*) " +
+                                                "FROM [exam] " +
+                                                "WHERE [instr_id] = '" + (string)Session["id"] + "'");
+            var result = new
+            {
+                aaData = le.LoadExam(),
+                iTotalDisplayRecords = noOfCategory,
+                iTotalRecords = noOfCategory
+            };
+            Context.Response.Write(js.Serialize(result));
         }
 
         [WebMethod]
@@ -38,10 +47,19 @@ namespace OQES.Instructor.WebServices
         }
 
         [WebMethod]
-        public void ViewExaminee(int examID)
+        public void ViewExaminee(int iDisplayLength, int iDisplayStart, int iSortCol_0, string sSortDir_0, string sSearch, int examID)
         {
-            Examinee examinee = new Examinee();
-            Context.Response.Write(js.Serialize(examinee.viewExaminee(examID)));
+            Examinee examinee = new Examinee(iDisplayLength, iDisplayStart, iSortCol_0, sSortDir_0, sSearch);
+            int noOfExaminee = Main.dataCounter("SELECT COUNT(*)" +
+                                                "FROM [examinee]" +
+                                                "WHERE [exam_id] = " + examID);
+            var result = new
+            {
+                aaData = examinee.ViewExaminee(examID),
+                iTotalDisplayRecords = noOfExaminee,
+                iTotalRecords = noOfExaminee
+            };
+            Context.Response.Write(js.Serialize(result));
         }
 
         [WebMethod]

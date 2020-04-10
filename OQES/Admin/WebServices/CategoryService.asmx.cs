@@ -1,4 +1,8 @@
 ﻿using OQES.Instructor;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Script.Serialization;
 using System.Web.Services;
 
@@ -15,11 +19,10 @@ namespace OQES.Admin.WebServices
     public class CategoryService : System.Web.Services.WebService
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
-        Category category = new Category();
-
         [WebMethod]
         public void LoadCategory()
         {
+            Category category = new Category();
             Context.Response.Write(js.Serialize(category.LoadCategory()));
         }
 
@@ -33,6 +36,7 @@ namespace OQES.Admin.WebServices
         [WebMethod]
         public void ShowToEditCategory(int categoryID)
         {
+            Category category = new Category();
             Context.Response.Write(js.Serialize(category.LoadCategory(categoryID)));
         }
     }

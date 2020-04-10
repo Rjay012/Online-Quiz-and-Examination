@@ -16,6 +16,15 @@ namespace OQES.Instructor
             userID = _userID;
         }
 
+        public Examinee(int _iDisplayLen, int _iDisplayStart, int _iSortCol, string _sSortDir, string _sSearch)
+        {
+            iDisplayLength = _iDisplayLen;
+            iDisplayStart = _iDisplayStart;
+            iSortCol_0 = _iSortCol;
+            sSortDir_0 = _sSortDir;
+            sSearch = _sSearch;
+        }
+
         public Examinee()
         {
 
@@ -42,13 +51,10 @@ namespace OQES.Instructor
         #endregion
 
         #region "Manage Exam Page"
-        public List<Examinee> viewExaminee(int examID)
+        public List<Examinee> ViewExaminee(int examID)
         {
             List<Examinee> examinee = new List<Examinee>();
-            var cmd = new SqlCommand("SELECT [examinee_id], [examinee].[stud_id], CONCAT([lname], ', ', [fname], ' ', SUBSTRING([mname], 1, 1), '.'), IIF([score] IS NOT NULL, CONCAT([score], '/', (SELECT dbo.questionRange(" + examID + "))), 'NULL'), IIF([rating] IS NOT NULL, [rating], 'NULL'), [examinee].[status]" +
-                                     "FROM [examinee] JOIN [student] ON [examinee].[stud_id] = [student].[stud_id]" +
-                                                     "LEFT JOIN [exam] ON [examinee].[exam_id] = [exam].[exam_id]" +
-                                     "WHERE [examinee].[exam_id] = " + examID, conn);
+            var cmd = new SqlCommand("EXEC [spGetExamineeSSP] @len = " + iDisplayLength + ", @start = " + iDisplayStart + ", @sortCol = " + iSortCol_0 + ", @sortDir = '" + sSortDir_0 + "', @search = '" + (string.IsNullOrEmpty(sSearch) ? null : sSearch) + "', @examID = " + examID, conn);
 
             conn.Open();
             var r = cmd.ExecuteReader();
@@ -56,16 +62,15 @@ namespace OQES.Instructor
             {
                 var examineeData = new Examinee
                 {
-                    examineeID = Convert.ToInt32(r[0]),
-                    studID = r[1].ToString(),
-                    fullname = r[2].ToString(),
-                    score = r[3].ToString(),
-                    rating = r[4].ToString(),
-                    status = r[5].ToString()
+                    examineeID = Convert.ToInt32(r[1]),
+                    studID = r[2].ToString(),
+                    fullname = r[3].ToString(),
+                    score = r[4].ToString(),
+                    rating = r[5].ToString(),
+                    status = r[6].ToString()
                 };
                 examinee.Add(examineeData);
             }
-
             conn.Close();
 
             return examinee;

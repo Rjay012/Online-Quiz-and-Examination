@@ -86,33 +86,6 @@
             <div class="row">
                 <div id="content" class="col-md-12 col-xs-12">
                     <div class="container-fluid">
-                        <div class="form-inline">
-                            <div class="col-lg-4">
-                                <asp:Label ID="Label1" runat="server" for="ddlFilterTitle" Text="Titles:"></asp:Label>
-                                <asp:DropDownList ID="ddlFilterTitle" AppendDataBoundItems="true" CssClass="form-control" runat="server" Width="100%">
-                                    <asp:ListItem Value="All" Selected="True">All</asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                            <div class="col-lg-4">
-                                <asp:Label ID="Label2" runat="server" for="ddlFilterSubject" Text="Subjects:"></asp:Label>
-                                <asp:DropDownList ID="ddlFilterSubject" AppendDataBoundItems="true" CssClass="form-control" runat="server" Width="100%">
-                                    <asp:ListItem Value="0" Selected="True">All</asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                            <div class="col-lg-4">
-                                <asp:Label ID="Label3" runat="server" Text="Status:"></asp:Label>
-                                <asp:DropDownList ID="ddlFilterStatus" for="ddlFilterStatus" CssClass="form-control" runat="server" Width="100%">
-                                    <asp:ListItem Value="All">All</asp:ListItem>
-                                    <asp:ListItem Value="ready">ready</asp:ListItem>
-                                    <asp:ListItem Value="open">open</asp:ListItem>
-                                    <asp:ListItem Value="closed">closed</asp:ListItem>
-                                    <asp:ListItem Value="finished">finished</asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="container-fluid">
                         <table id="examTable" class="table table-bordered display" width="100%">  
                             <thead>  
                                 <tr>  
@@ -130,7 +103,7 @@
                                     <th></th>
                                 </tr>  
                             </thead>  
-                        </table>  
+                        </table>
                     </div>
                     <br />
                     <div class="container-fluid">
@@ -188,7 +161,7 @@
     <script src="../Content/DataTables/DataTables-1.10.18/js/dataTables.jquery-1.10.20.js"></script>
     <script src="../Content/DataTables/DataTables-1.10.18/js/dataTables.rowReorder.min.js"></script>
     <script src="../Content/DataTables/DataTables-1.10.18/js/dataTables.responsive-2.2.3.min.js"></script>
-
     <!--USER DEFINED JS-->
+    <script src="../Scripts/DataTableTrigger.js"></script>
     <script src="js/ManageExam.js"></script>
 </asp:Content>

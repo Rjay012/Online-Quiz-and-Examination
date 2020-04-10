@@ -155,5 +155,6 @@
     <script src="../Content/DataTables/DataTables-1.10.18/js/dataTables.responsive-2.2.3.min.js"></script>
 
     <!--USER DEFINED JS-->
+    <script src="../Scripts/DataTableTrigger.js"></script>
     <script src="js/category.js"></script>
 </asp:Content>

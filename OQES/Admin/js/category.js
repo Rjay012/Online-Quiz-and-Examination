@@ -3,40 +3,18 @@
 });
 
 function loadCategory() {
-    $("#categoryTable").DataTable().clear().destroy();  //destroy table for initializing new data
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        url: "WebServices//CategoryService.asmx/LoadCategory",
-        success: function (data) {
-            $('#categoryTable').DataTable({
-                "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
-                data: data,
-                columns: [
-                    {
-                        'data': 'categoryID'
-                    },
-                    {
-                        'data': 'category'
-                    },
-                    {
-                        'data': 'categoryID', render: function (data, type, row) {
-                            return "<button class='btn btn-primary btn-sm' type='button' data-toggle='modal' data-target='#myModalEditCategory' onclick='editCategory(" + parseInt(data) + ")'>EDIT</button>";
-                        }
-                    },
-                    {
-                        'data': 'categoryID', render: function (data, type, row) {
-                            return "<button class='btn btn-danger btn-sm' type='button' onclick='dropCategory(" + parseInt(data) + ")'>DROP</button>";
-                        }
-                    }
-                ],
-                rowReorder: {
-                    selector: 'td:nth-child(2)'
-                },
-                responsive: true
-            });
-        }
-    });
+    var columns = [{ 'data': 'categoryID', 'width': '8%' }, { 'data': 'category' },
+    {
+        'data': 'categoryID', render: function (data, type, row) {
+            return "<button class='btn btn-primary btn-sm' type='button' data-toggle='modal' data-target='#myModalEditCategory' onclick='editCategory(" + parseInt(data) + ")'>EDIT</button>";
+        }, 'width': '10%'
+    },
+    {
+        'data': 'categoryID', render: function (data, type, row) {
+            return "<button class='btn btn-danger btn-sm' type='button' onclick='dropCategory(" + parseInt(data) + ")'>DROP</button>";
+        }, 'width': '10%'
+    }];
+    NormalLoadingProcess("categoryTable", "WebServices//CategoryService.asmx/LoadCategory", null, columns);
 }
 
 function editCategory(categoryID) {

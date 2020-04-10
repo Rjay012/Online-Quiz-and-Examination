@@ -36,6 +36,16 @@ namespace OQES.Instructor
             examID = _examID;
         }
 
+        public Exam(string _userID, int _iDisplayLen, int _iDisplayStart, int _iSortCol, string _sSortDir, string _sSearch)
+        {
+            userID = _userID;
+            iDisplayLength = _iDisplayLen;
+            iDisplayStart = _iDisplayStart;
+            iSortCol_0 = _iSortCol;
+            sSortDir_0 = _sSortDir;
+            sSearch = _sSearch;
+        }
+
         public Exam()
         {
 
@@ -43,32 +53,10 @@ namespace OQES.Instructor
 
         #region "(INSTRUCTOR)"
         #region "Manage Exam Page"
-        public List<Exam> loadExam(string title, int subjID, string status)
+        public List<Exam> LoadExam()
         {
-            string filter = "";
-            if (title != "All" && subjID > 0)
-            {
-                filter = "[title] = '" + title + "' AND [exam].[subj_id] = " + subjID + " AND ";  //combined filter
-            }
-            else if (title != "All" && subjID == 0)
-            {
-                filter = "[title] = '" + title + "' AND ";
-            }
-            else if (title == "All" && subjID > 0)
-            {
-                filter = "[exam].[subj_id] = " + subjID + " AND ";
-            }
-
-            if (status != "All")
-            {
-                status = "[status] = '" + status + "' AND ";
-                filter += status;
-            }
-
-            var exam = new List<Exam>();
-            var cmd = new SqlCommand("SELECT [exam].[exam_id], [title], [subject_title], [exam_date], [status], [time_limit], (SELECT dbo.calculatePassingScore([exam_id])), (SELECT dbo.questionRange([exam_id]))" +
-                                     "FROM [exam] JOIN [subject] ON [exam].[subj_id] = [subject].[subj_id]" +
-                                     "WHERE " + filter + "[instr_id] = '" + userID + "' ORDER BY [exam_date] DESC", conn);
+            List<Exam> exam = new List<Exam>();
+            var cmd = new SqlCommand("EXEC [spGetExamSSP] @len = " + iDisplayLength + ", @start = " + iDisplayStart + ", @sortCol = " + iSortCol_0 + ", @sortDir = '" + sSortDir_0 + "', @search = '" + (string.IsNullOrEmpty(sSearch) ? null : sSearch) + "', @instrID = '" + userID + "'", conn); //" + filter + " removed
 
             conn.Open();
             var r = cmd.ExecuteReader();
@@ -76,14 +64,14 @@ namespace OQES.Instructor
             {
                 var info = new Exam
                 {
-                    examID = Convert.ToInt32(r[0].ToString()),
-                    title = r[1].ToString(),
-                    subj = r[2].ToString(),
-                    date = Convert.ToDateTime(r[3].ToString()).ToString("MM/dd/yyyy"),
-                    status = r[4].ToString(),
-                    timeLimit = Convert.ToInt32(r[5].ToString()),
-                    passingScore = Convert.ToInt32(r[6].ToString()),
-                    qRange = Convert.ToInt32(r[7].ToString())
+                    examID = Convert.ToInt32(r[1].ToString()),
+                    title = r[2].ToString(),
+                    subj = r[3].ToString(),
+                    date = Convert.ToDateTime(r[4].ToString()).ToString("MM/dd/yyyy"),
+                    status = r[5].ToString(),
+                    timeLimit = Convert.ToInt32(r[6].ToString()),
+                    passingScore = Convert.ToInt32(r[7].ToString()),
+                    qRange = Convert.ToInt32(r[8].ToString())
                 };
                 exam.Add(info);
             }
