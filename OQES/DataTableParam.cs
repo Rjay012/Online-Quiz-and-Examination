@@ -12,6 +12,8 @@ namespace OQES
         public int iSortCol_0 { get; set; }
         public string sSortDir_0 { get; set; }
         public string sSearch { get; set; }
-        
+
+        public int AutoInc { get; set; }
+        public int TotalCount { get; set; }
     }
 }

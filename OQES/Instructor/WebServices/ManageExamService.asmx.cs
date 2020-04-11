@@ -1,4 +1,6 @@
-﻿using System.Web.Script.Serialization;
+﻿using System;
+using System.Linq;
+using System.Web.Script.Serialization;
 using System.Web.Services;
 
 namespace OQES.Instructor.WebServices
@@ -19,14 +21,14 @@ namespace OQES.Instructor.WebServices
         public void LoadExam(int iDisplayLength, int iDisplayStart, int iSortCol_0, string sSortDir_0, string sSearch)
         {
             Exam le = new Exam((string)Session["id"], iDisplayLength, iDisplayStart, iSortCol_0, sSortDir_0, sSearch);
-            int noOfCategory = Main.dataCounter("SELECT COUNT(*) " +
-                                                "FROM [exam] " +
-                                                "WHERE [instr_id] = '" + (string)Session["id"] + "'");
+            int noOfExam = Main.dataCounter("SELECT COUNT(*) " +
+                                            "FROM [exam] " +
+                                            "WHERE [instr_id] = '" + (string)Session["id"] + "'");
             var result = new
             {
                 aaData = le.LoadExam(),
-                iTotalDisplayRecords = noOfCategory,
-                iTotalRecords = noOfCategory
+                iTotalDisplayRecords = Convert.ToInt32(le.LoadExam().ElementAt(0).TotalCount),
+                iTotalRecords = noOfExam
             };
             Context.Response.Write(js.Serialize(result));
         }

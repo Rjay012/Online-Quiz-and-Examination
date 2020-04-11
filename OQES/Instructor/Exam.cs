@@ -62,18 +62,18 @@ namespace OQES.Instructor
             var r = cmd.ExecuteReader();
             while (r.Read())
             {
-                var info = new Exam
-                {
-                    examID = Convert.ToInt32(r[1].ToString()),
-                    title = r[2].ToString(),
-                    subj = r[3].ToString(),
-                    date = Convert.ToDateTime(r[4].ToString()).ToString("MM/dd/yyyy"),
-                    status = r[5].ToString(),
-                    timeLimit = Convert.ToInt32(r[6].ToString()),
-                    passingScore = Convert.ToInt32(r[7].ToString()),
-                    qRange = Convert.ToInt32(r[8].ToString())
-                };
-                exam.Add(info);
+                exam.Add(new Exam {
+                    AutoInc = Convert.ToInt32(r[0]),
+                    TotalCount = Convert.ToInt32(r[1]),
+                    examID = Convert.ToInt32(r[2]),
+                    title = r[3].ToString(),
+                    subj = r[4].ToString(),
+                    date = Convert.ToDateTime(r[5].ToString()).ToString("MM/dd/yyyy"),
+                    status = r[6].ToString(),
+                    timeLimit = Convert.ToInt32(r[7]),
+                    passingScore = Convert.ToInt32(r[8]),
+                    qRange = Convert.ToInt32(r[9])
+                });
             }
             conn.Close();
 

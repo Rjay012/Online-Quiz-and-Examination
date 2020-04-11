@@ -3,7 +3,7 @@
 });
 
 function loadExam() {
-    var columns = [{ 'data': 'examID' }, { 'data': 'title' }, { 'data': 'subj' }, { 'data': 'date'},
+    var columns = [{ 'data': 'examID', visible: false }, { 'data': 'title' }, { 'data': 'subj' }, { 'data': 'date'},
         {
             'data': 'status', render: function (data, type, row) {
 
@@ -84,7 +84,7 @@ function loadExam() {
 }
 
 function viewExaminee(examID) {
-    var columns = [{ 'data': 'examineeID', 'width': '5%' }, { 'data': 'studID', 'width': '15%' }, { 'data': 'fullname' },
+    var columns = [{ 'data': 'examineeID', 'width': '5%', visible: false }, { 'data': 'studID', 'width': '15%' }, { 'data': 'fullname' },
         {
             'data': 'status', render: function (stat, type, row) {
                 var color = "orange";
