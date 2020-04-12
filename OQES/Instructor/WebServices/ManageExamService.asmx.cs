@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
 using System.Web.Services;
@@ -24,11 +25,12 @@ namespace OQES.Instructor.WebServices
             int noOfExam = Main.dataCounter("SELECT COUNT(*) " +
                                             "FROM [exam] " +
                                             "WHERE [instr_id] = '" + (string)Session["id"] + "'");
+            List<Exam> exam = le.LoadExam();
             var result = new
             {
-                aaData = le.LoadExam(),
-                iTotalDisplayRecords = Convert.ToInt32(le.LoadExam().ElementAt(0).TotalCount),
-                iTotalRecords = noOfExam
+                aaData = exam,
+                iTotalDisplayRecords = Convert.ToInt32(exam.ElementAt(0).TotalCount),
+                TotalRecords = noOfExam
             };
             Context.Response.Write(js.Serialize(result));
         }
@@ -55,10 +57,11 @@ namespace OQES.Instructor.WebServices
             int noOfExaminee = Main.dataCounter("SELECT COUNT(*)" +
                                                 "FROM [examinee]" +
                                                 "WHERE [exam_id] = " + examID);
+            List<Examinee> examineeResult = examinee.ViewExaminee(examID);
             var result = new
             {
-                aaData = examinee.ViewExaminee(examID),
-                iTotalDisplayRecords = noOfExaminee,
+                aaData = examineeResult,
+                iTotalDisplayRecords = Convert.ToInt32(examineeResult.ElementAt(0).TotalCount),
                 iTotalRecords = noOfExaminee
             };
             Context.Response.Write(js.Serialize(result));

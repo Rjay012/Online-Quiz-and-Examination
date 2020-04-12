@@ -62,12 +62,13 @@ namespace OQES.Instructor
             {
                 var examineeData = new Examinee
                 {
-                    examineeID = Convert.ToInt32(r[1]),
-                    studID = r[2].ToString(),
-                    fullname = r[3].ToString(),
-                    score = r[4].ToString(),
-                    rating = r[5].ToString(),
-                    status = r[6].ToString()
+                    TotalCount = Convert.ToInt32(r[1]),
+                    examineeID = Convert.ToInt32(r[2]),
+                    studID = r[3].ToString(),
+                    fullname = r[4].ToString(),
+                    score = r[5].ToString(),
+                    rating = r[6].ToString(),
+                    status = r[7].ToString()
                 };
                 examinee.Add(examineeData);
             }
