@@ -12,12 +12,15 @@
             }
         },
         fnServerData: function (sSource, aoData, fnCallBack) {
+            //alert(JSON.stringify(aoData));
             $.ajax({
                 type: "post",
                 dataType: "json",
                 data: aoData,
                 url: sSource,
                 success: fnCallBack
+            }).done(function (result) {
+                //alert(JSON.stringify(result));
             });
         },
         columns: projectColumn,

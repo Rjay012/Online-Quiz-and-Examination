@@ -19,17 +19,18 @@ namespace OQES.Instructor.WebServices
         JavaScriptSerializer js = new JavaScriptSerializer();
 
         [WebMethod(EnableSession = true)]
-        public void LoadExam(int iDisplayLength, int iDisplayStart, int iSortCol_0, string sSortDir_0, string sSearch)
+        public void LoadExam(int sEcho, int iDisplayLength, int iDisplayStart, int iSortCol_0, string sSortDir_0, string sSearch)
         {
             Exam le = new Exam((string)Session["id"], iDisplayLength, iDisplayStart, iSortCol_0, sSortDir_0, sSearch);
             int noOfExam = Main.dataCounter("SELECT COUNT(*) " +
                                             "FROM [exam] " +
                                             "WHERE [instr_id] = '" + (string)Session["id"] + "'");
-            List<Exam> exam = le.LoadExam();
+            //List<Exam> exam = le.LoadExam();
             var result = new
             {
-                aaData = exam,
-                iTotalDisplayRecords = Convert.ToInt32(exam.ElementAt(0).TotalCount),
+                aaData = le.LoadExam(),
+                sEcho = sEcho,
+                iTotalDisplayRecords = noOfExam,//Convert.ToInt32(exam.ElementAt(0).TotalCount),
                 TotalRecords = noOfExam
             };
             Context.Response.Write(js.Serialize(result));
@@ -57,11 +58,11 @@ namespace OQES.Instructor.WebServices
             int noOfExaminee = Main.dataCounter("SELECT COUNT(*)" +
                                                 "FROM [examinee]" +
                                                 "WHERE [exam_id] = " + examID);
-            List<Examinee> examineeResult = examinee.ViewExaminee(examID);
+            //List<Examinee> examineeResult = examinee.ViewExaminee(examID);
             var result = new
             {
-                aaData = examineeResult,
-                iTotalDisplayRecords = Convert.ToInt32(examineeResult.ElementAt(0).TotalCount),
+                aaData = examinee.ViewExaminee(examID),
+                iTotalDisplayRecords = noOfExaminee,//Convert.ToInt32(examineeResult.ElementAt(0).TotalCount),
                 iTotalRecords = noOfExaminee
             };
             Context.Response.Write(js.Serialize(result));
